@@ -17,6 +17,7 @@ enum thread_status
 /* Thread identifier type.
    You can redefine this to whatever type you like. */
 typedef int tid_t;
+int load_avg; /*ADDED*/ // for the whole system
 #define TID_ERROR ((tid_t) -1)          /* Error value for tid_t. */
 
 /* Thread priorities. */
@@ -92,6 +93,12 @@ struct thread
 
     /* Shared between thread.c and synch.c. */
     struct list_elem elem;              /* List element. */
+    
+    /*ADDED*/
+    int nice; //per thread
+    int recent_cpu; //per thread
+    int priority; //per thread
+    /*ADDED*/
 
 #ifdef USERPROG
     /* Owned by userprog/process.c. */
@@ -133,9 +140,17 @@ void thread_foreach (thread_action_func *, void *);
 int thread_get_priority (void);  //implement
 void thread_set_priority (int);  //implement
 
-int thread_get_nice (void);
-void thread_set_nice (int);
-int thread_get_recent_cpu (void);
-int thread_get_load_avg (void);
+int thread_get_nice (struct thread *); /*modified args*/
+void thread_set_nice (struct thread *, int); //modified first arg
+int thread_get_recent_cpu (struct thread *); /*modified args*/
+int thread_get_load_avg (void); 
+
+/*ADDED*/
+int calc_priority(void);
+void calc_recent_cpu(struct thread *);
+void calc_load_avg();
+int cur_thread_recent_cpu();
+int update_all_pri_rec();
+/*ADDED*/
 
 #endif /* threads/thread.h */

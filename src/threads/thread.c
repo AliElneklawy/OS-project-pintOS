@@ -120,7 +120,7 @@ thread_start (void)
 /* Called by the timer interrupt handler at each timer tick.
    Thus, this function runs in an external interrupt context. */
 void
-thread_tick (void) 
+thread_tick (void) //called from timer.c 
 {
   struct thread *t = thread_current ();
 
@@ -331,13 +331,42 @@ thread_foreach (thread_action_func *func, void *aux)
     }
 }
 
+int calc_priority(void) /*ADDED*/
+{
+  struct thread *t = thread_current();
+  calc_load_avg();
+  calc_recent_cpu(t);
+  t -> priority = PRI_MAX - (t -> recent_cpu / 4) - (thread_get_nice(t) * 2); 
+}
+
+void calc_load_avg() /*ADDED*/
+{
+  int ready_threads;
+
+  for(struct list_elem* iter = list_begin(&ready_list);
+      iter != list_end(&ready_list);
+      iter = list_next(iter)){
+
+    ready_threads++;
+  }
+
+  load_avg = (59/60) * load_avg + (1/60) * ready_threads;
+}
+
+void calc_recent_cpu(struct thread *t) /* ADDED*/
+{
+  int deacy = (2 * load_avg) / ((2 * load_avg) + 1);
+  t -> recent_cpu = deacy * t -> recent_cpu + thread_get_nice(t);
+}
+
 /* Sets the current thread's priority to NEW_PRIORITY. */
 void
 thread_set_priority (int new_priority) // you should check whether the current priority is greater than the running thread
 {
-  thread_current ()->priority = new_priority;
-  /*handle all possible cases and donations*/
-  //yield();
+  if(!thread_mlfqs){ /*ADDED*/
+    //disable priority setting when using advanced scheduler
+    thread_current ()->priority = new_priority;
+  }
 }
 
 /* Returns the current thread's priority. */
@@ -349,33 +378,32 @@ thread_get_priority (void)
 
 /* Sets the current thread's nice value to NICE. */
 void
-thread_set_nice (int nice UNUSED) 
+thread_set_nice (struct thread *t, int nice UNUSED)  /*modified first arg*/
 {
-  /* Not yet implemented. */
+  /*ADDED*/
+  t -> nice = nice;
 }
 
 /* Returns the current thread's nice value. */
 int
-thread_get_nice (void) 
+thread_get_nice (struct thread *t) /*modified args*/
 {
-  /* Not yet implemented. */
-  return 0;
+  /*ADDED*/
+  return t -> nice;
 }
 
 /* Returns 100 times the system load average. */
 int
 thread_get_load_avg (void) 
 {
-  /* Not yet implemented. */
-  return 0;
+  return load_avg * 100;  /*ADDED*/
 }
 
 /* Returns 100 times the current thread's recent_cpu value. */
 int
-thread_get_recent_cpu (void) 
+thread_get_recent_cpu (struct thread *t) /*modified args*/
 {
-  /* Not yet implemented. */
-  return 0;
+  return t -> recent_cpu * 100; /*ADDED*/
 }
 
 /* Idle thread.  Executes when no other thread is ready to run.
@@ -465,6 +493,12 @@ init_thread (struct thread *t, const char *name, int priority)
   t->stack = (uint8_t *) t + PGSIZE;
   t->priority = priority;
   t->magic = THREAD_MAGIC;
+
+  /*ADDED*/
+  t -> nice = 0;
+  t -> recent_cpu = 0;
+  load_avg = 0; //thread.h line 20
+  /*ADDED*/
 
   old_level = intr_disable ();
   list_push_back (&all_list, &t->allelem);
