@@ -157,7 +157,7 @@ thread_tick (void) //called from timer.c
     }
 
     if (timer_ticks () % 100 == 0) //TIMER_FREQ = 100 defined in timer.h
-    /*every 1 sec, update every thread's recent_cpu*/
+    /*every 1 sec, update every thread's recent_cpu, load_avg and priority*/
       calc_load_avg();
       struct thread *t2; //i used t2 instead of t that is defined in the function here to avoid confusion
       for(struct list_elem* iter = list_begin(&all_list);
