@@ -26,7 +26,7 @@ static struct list ready_list;
 
 /* List of all processes.  Processes are added to this list
    when they are first scheduled and removed when they exit. */
-static struct list all_list;
+static struct list all_list; 
 
 /* Idle thread. */
 static struct thread *idle_thread;
@@ -137,6 +137,28 @@ thread_tick (void) //called from timer.c
   /* Enforce preemption. */
   if (++thread_ticks >= TIME_SLICE)
     intr_yield_on_return ();
+  
+  /*ADDED*/
+  if(thread_mlfqs){
+    /*every 1 sec, increase running threads' recent_cpu by 1*/
+    if((kernel_ticks % 1) == 0){
+      for(struct list_elem* iter = list_begin(&ready_list);
+          iter != list_end(&ready_list);
+          iter = list_next(iter)){
+            //TO-DO
+          }
+    }
+    if ((kernel_ticks % 4) == 0){ //recaclculate priority of all threads every 4th tick
+      for(struct list_elem* iter = list_begin(&all_list);
+          iter != list_end(&all_list);
+          iter = list_next(iter)){
+
+            calc_priority(iter->next);
+          }
+    }
+  }
+
+  /*ADDED*/
 }
 
 /* Prints thread statistics. */
@@ -331,9 +353,9 @@ thread_foreach (thread_action_func *func, void *aux)
     }
 }
 
-int calc_priority(void) /*ADDED*/
+int calc_priority(struct thread *t) /*ADDED*/
 {
-  struct thread *t = thread_current();
+  //struct thread *t = thread_current();
   calc_load_avg();
   calc_recent_cpu(t);
   t -> priority = PRI_MAX - (t -> recent_cpu / 4) - (thread_get_nice(t) * 2); 
@@ -351,6 +373,7 @@ void calc_load_avg() /*ADDED*/
   }
 
   load_avg = (59/60) * load_avg + (1/60) * ready_threads;
+  /*load_avg NOT initialized yet. it should be zero at first*/
 }
 
 void calc_recent_cpu(struct thread *t) /* ADDED*/

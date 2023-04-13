@@ -5,6 +5,9 @@
 #include <list.h>
 #include <stdint.h>
 
+//static struct list all_list; //moved it from thread.c
+//static struct list ready_list; //moved it from thread.c
+
 /* States in a thread's life cycle. */
 enum thread_status
   {
@@ -97,7 +100,6 @@ struct thread
     /*ADDED*/
     int nice; //per thread
     int recent_cpu; //per thread
-    int priority; //per thread
     /*ADDED*/
 
 #ifdef USERPROG
@@ -146,7 +148,7 @@ int thread_get_recent_cpu (struct thread *); /*modified args*/
 int thread_get_load_avg (void); 
 
 /*ADDED*/
-int calc_priority(void);
+int calc_priority(struct thread *);
 void calc_recent_cpu(struct thread *);
 void calc_load_avg();
 int cur_thread_recent_cpu();
