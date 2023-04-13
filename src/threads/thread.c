@@ -535,7 +535,7 @@ init_thread (struct thread *t, const char *name, int priority)
   /*ADDED*/
   t -> nice = 0;
   t -> recent_cpu = 0;
-  load_avg = 0; //thread.h line 20. Not sure if it should be declared here
+  //load_avg = 0; //thread.h line 20. Not sure if it should be declared here
   /*ADDED*/
 
   old_level = intr_disable ();
