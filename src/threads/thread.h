@@ -143,8 +143,8 @@ int thread_get_priority (void);  //implement
 void thread_set_priority (int);  //implement
 
 int thread_get_nice (struct thread *); /*modified args*/
-void thread_set_nice (struct thread *, int); //modified first arg
-int thread_get_recent_cpu (struct thread *); /*modified args*/
+void thread_set_nice (int);
+int thread_get_recent_cpu ();
 int thread_get_load_avg (void); 
 
 /*ADDED*/
