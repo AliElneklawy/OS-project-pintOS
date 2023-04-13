@@ -140,24 +140,33 @@ thread_tick (void) //called from timer.c
   
   /*ADDED*/
   if(thread_mlfqs){
-    /*every 1 sec, increase running threads' recent_cpu by 1*/
-    if((kernel_ticks % 1) == 0){
-      for(struct list_elem* iter = list_begin(&ready_list);
-          iter != list_end(&ready_list);
-          iter = list_next(iter)){
-            //TO-DO
-          }
+    /*every 1 tick, increase running thread's recent_cpu by 1*/
+    if(t != idle_thread){
+      t -> recent_cpu++;
     }
-    if ((kernel_ticks % 4) == 0){ //recaclculate priority of all threads every 4th tick
+
+    if((kernel_ticks % 4) == 0){ //recaclculate priority of all threads every 4th tick
+      struct thread *t2;
       for(struct list_elem* iter = list_begin(&all_list);
           iter != list_end(&all_list);
           iter = list_next(iter)){
-
-            calc_priority(iter->next);
+            t2 = list_entry(iter, struct thread, allelem);
+            calc_priority(t2);
           }
     }
-  }
 
+    if (timer_ticks () % 100 == 0) //TIMER_FREQ = 100 defined in timer.h
+    /*every 1 sec, update every thread's recent_cpu*/
+      calc_load_avg();
+      struct thread *t2; //i used t2 instead of t that is defined in the function here to avoid confusion
+      for(struct list_elem* iter = list_begin(&all_list);
+          iter != list_end(&all_list);
+          iter = list_next(iter)){
+            t2 = list_entry(iter, struct thread, allelem);
+            calc_recent_cpu(t2);
+            calc_priority(t2);
+          }
+  }
   /*ADDED*/
 }
 
@@ -356,9 +365,14 @@ thread_foreach (thread_action_func *func, void *aux)
 int calc_priority(struct thread *t) /*ADDED*/
 {
   //struct thread *t = thread_current();
-  calc_load_avg();
-  calc_recent_cpu(t);
+  //calc_load_avg();    /* Not sure whethter these 2 functions should be added here
+  //calc_recent_cpu(t);  */
   t -> priority = PRI_MAX - (t -> recent_cpu / 4) - (thread_get_nice(t) * 2); 
+  
+  if(t -> priority > PRI_MAX)
+    t -> priority = PRI_MAX;
+  else if(t -> priority < PRI_MIN)
+    t -> priority = PRI_MIN;
 }
 
 void calc_load_avg() /*ADDED*/
@@ -373,7 +387,7 @@ void calc_load_avg() /*ADDED*/
   }
 
   load_avg = (59/60) * load_avg + (1/60) * ready_threads;
-  /*load_avg NOT initialized yet. it should be zero at first*/
+  /*load_avg NOT initialized yet. not sure where to initialize it. it should be zero at first*/
 }
 
 void calc_recent_cpu(struct thread *t) /* ADDED*/
@@ -520,7 +534,7 @@ init_thread (struct thread *t, const char *name, int priority)
   /*ADDED*/
   t -> nice = 0;
   t -> recent_cpu = 0;
-  load_avg = 0; //thread.h line 20
+  load_avg = 0; //thread.h line 20. Not sure if it should be declared here
   /*ADDED*/
 
   old_level = intr_disable ();
