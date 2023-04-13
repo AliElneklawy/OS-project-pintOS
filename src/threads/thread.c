@@ -390,6 +390,7 @@ void calc_load_avg() /*ADDED*/
 
   load_avg = (59/60) * load_avg + (1/60) * ready_threads;
   /*load_avg NOT decalred yet. not sure where to initialize it. it should be zero at first*/
+  /*i declared it in line 62 but i am not sure whether it should be declared here*/
 }
 
 void calc_recent_cpu(struct thread *t) /* ADDED*/
