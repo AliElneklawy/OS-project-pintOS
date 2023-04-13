@@ -20,7 +20,7 @@ enum thread_status
 /* Thread identifier type.
    You can redefine this to whatever type you like. */
 typedef int tid_t;
-int load_avg = 0; /*ADDED*/ // for the whole system
+//int load_avg = 0; /*ADDED*/ // for the whole system
 #define TID_ERROR ((tid_t) -1)          /* Error value for tid_t. */
 
 /* Thread priorities. */
