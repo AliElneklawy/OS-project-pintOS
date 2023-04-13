@@ -145,7 +145,8 @@ thread_tick (void) //called from timer.c
       t -> recent_cpu++;
     }
 
-    if((kernel_ticks % 4) == 0){ //recaclculate priority of all threads every 4th tick
+    if((kernel_ticks % 4) == 0){ //TIME_SLICE = 4 in threads.c
+      //recaclculate priority of all threads every 4th tick
       struct thread *t2;
       for(struct list_elem* iter = list_begin(&all_list);
           iter != list_end(&all_list);
