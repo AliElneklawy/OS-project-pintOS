@@ -84,7 +84,7 @@ static tid_t allocate_tid (void);
 
    It is not safe to call thread_current() until this function
    finishes. */
-int load_avg  ; // declare a global var to be initialize in run time 
+int load_avg ; // declare a global var to be initialize in run time 
 void
 thread_init (void) 
 {
@@ -95,6 +95,7 @@ thread_init (void)
   list_init (&all_list);
 
   load_avg = 0; /*ADDED*/
+   
   /* Set up a thread structure for the running thread. */
   initial_thread = running_thread ();
   init_thread (initial_thread, "main", PRI_DEFAULT);
@@ -405,10 +406,11 @@ void calc_recent_cpu(struct thread *t) /* ADDED*/
 void
 thread_set_priority (int new_priority) // you should check whether the current priority is greater than the running thread
 {
-  if(!thread_mlfqs){ /*ADDED*/
+  if(thread_mlfqs){ /*ADDED*/
     //disable priority setting when using advanced scheduler
-    thread_current ()->priority = new_priority;
-  }
+    return;
+   }
+   thread_current ()->priority = new_priority;
 }
 
 /* Returns the current thread's priority. */
@@ -431,7 +433,7 @@ int
 thread_get_nice (struct thread *t) /*modified args*/
 {
   /*ADDED*/
-  return t -> nice;
+  return t -> nice; //TO-DO: use thread_current() instead of passing an arguement
 }
 
 /* Returns 100 times the system load average. */
@@ -539,7 +541,6 @@ init_thread (struct thread *t, const char *name, int priority)
   /*ADDED*/
   t -> nice = 0;
   t -> recent_cpu = 0;
-  //load_avg = 0; //thread.h line 20. Not sure if it should be declared here
   /*ADDED*/
 
   old_level = intr_disable ();
