@@ -85,6 +85,7 @@ static tid_t allocate_tid (void);
    It is not safe to call thread_current() until this function
    finishes. */
 int load_avg ; // declare a global var to be initialize in run time 
+
 void
 thread_init (void) 
 {
