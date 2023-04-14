@@ -59,7 +59,6 @@ static unsigned thread_ticks;   /* # of timer ticks since last yield. */
    Controlled by kernel command-line option "-o mlfqs". */
 bool thread_mlfqs;
 
-int load_avg = 0; /*ADDED*/
 static void kernel_thread (thread_func *, void *aux);
 
 static void idle (void *aux UNUSED);
@@ -94,6 +93,7 @@ thread_init (void)
   list_init (&ready_list);
   list_init (&all_list);
 
+  load_avg = 0; /*ADDED*/
   /* Set up a thread structure for the running thread. */
   initial_thread = running_thread ();
   init_thread (initial_thread, "main", PRI_DEFAULT);
@@ -390,7 +390,8 @@ void calc_load_avg() /*ADDED*/
 
   load_avg = (59/60) * load_avg + (1/60) * ready_threads;
   /*load_avg NOT decalred yet. not sure where to initialize it. it should be zero at first*/
-  /*i declared it in line 62 but i am not sure whether it should be declared here*/
+  /*i declared it in line 119 in thread.h but i am not sure whether it should be declared there*/
+  /*i initialized it in thread_intit() line 96*/
 }
 
 void calc_recent_cpu(struct thread *t) /* ADDED*/
