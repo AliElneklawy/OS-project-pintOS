@@ -116,7 +116,8 @@ struct thread
    If true, use multi-level feedback queue scheduler.
    Controlled by kernel command-line option "-o mlfqs". */
 extern bool thread_mlfqs;
-int load_avg; /*ADDED*/
+extern int load_avg; /*ADDED*/
+// just added extern to avoid redefine the variable
 
 void thread_init (void);
 void thread_start (void);
