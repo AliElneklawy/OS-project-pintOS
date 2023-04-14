@@ -371,7 +371,7 @@ int calc_priority(struct thread *t) /*ADDED*/
   //struct thread *t = thread_current();
   //calc_load_avg();    /* Not sure whethter these 2 functions should be added here
   //calc_recent_cpu(t);  */
-  t -> priority = PRI_MAX - (t -> recent_cpu / 4) - (thread_get_nice(t) * 2); 
+  t -> priority = PRI_MAX - (t -> recent_cpu / 4) - (thread_get_nice() * 2); 
   
   if(t -> priority > PRI_MAX)
     t -> priority = PRI_MAX;
@@ -382,6 +382,7 @@ int calc_priority(struct thread *t) /*ADDED*/
 void calc_load_avg() /*ADDED*/
 {
   int ready_threads;
+  ready_threads = 0;
 
   for(struct list_elem* iter = list_begin(&ready_list);
       iter != list_end(&ready_list);
@@ -391,9 +392,6 @@ void calc_load_avg() /*ADDED*/
   }
 
   load_avg = (59/60) * load_avg + (1/60) * ready_threads;
-  /*load_avg NOT decalred yet. not sure where to initialize it. it should be zero at first*/
-  /*i declared it in line 119 in thread.h but i am not sure whether it should be declared there*/
-  /*i initialized it in thread_intit() line 96*/
 }
 
 void calc_recent_cpu(struct thread *t) /* ADDED*/
@@ -406,11 +404,11 @@ void calc_recent_cpu(struct thread *t) /* ADDED*/
 void
 thread_set_priority (int new_priority) // you should check whether the current priority is greater than the running thread
 {
-  if(thread_mlfqs){ /*ADDED*/
-    //disable priority setting when using advanced scheduler
+  //disable priority setting when using advanced scheduler
+  if(thread_mlfqs) /*ADDED*/
     return;
-   }
-   thread_current ()->priority = new_priority;
+
+  thread_current ()->priority = new_priority;
 }
 
 /* Returns the current thread's priority. */
@@ -430,10 +428,10 @@ thread_set_nice (int nice UNUSED)  /*modified first arg*/
 
 /* Returns the current thread's nice value. */
 int
-thread_get_nice (struct thread *t) /*modified args*/
+thread_get_nice () /*modified args*/
 {
   /*ADDED*/
-  return t -> nice; //TO-DO: use thread_current() instead of passing an arguement
+  return thread_current() -> nice; //TO-DO: use thread_current() instead of passing an arguement
 }
 
 /* Returns 100 times the system load average. */
