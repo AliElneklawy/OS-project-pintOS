@@ -428,10 +428,10 @@ thread_set_nice (int nice UNUSED)  /*modified first arg*/
 
 /* Returns the current thread's nice value. */
 int
-thread_get_nice () /*modified args*/
+thread_get_nice ()
 {
   /*ADDED*/
-  return thread_current() -> nice; //TO-DO: use thread_current() instead of passing an arguement
+  return thread_current() -> nice;
 }
 
 /* Returns 100 times the system load average. */
