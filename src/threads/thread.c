@@ -426,7 +426,10 @@ void
 thread_set_nice (int nice UNUSED)  /*modified first arg*/
 {
   /*ADDED*/
-  thread_current() -> nice = nice;
+  struct thread *t = thread_current();
+  t -> nice = nice;
+  calc_priority(t);
+  /*ADDED*/
 }
 
 /* Returns the current thread's nice value. */
