@@ -382,15 +382,17 @@ int calc_priority(struct thread *t) /*ADDED*/
 
 void calc_load_avg() /*ADDED*/
 {
-  int ready_threads;
-  ready_threads = 0;
+  size_t ready_threads;
+  /*ready_threads = 0;
 
   for(struct list_elem* iter = list_begin(&ready_list);
       iter != list_end(&ready_list);
       iter = list_next(iter)){
 
     ready_threads++;
-  }
+  }*/ //there is a functions that returns the size of the list directly
+
+  ready_threads = list_size(&(ready_list));
 
   load_avg = (59/60) * load_avg + (1/60) * ready_threads;
 }
