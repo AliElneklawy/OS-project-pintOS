@@ -11,6 +11,7 @@
 #include "threads/switch.h"
 #include "threads/synch.h"
 #include "threads/vaddr.h"
+#include "fixed_point.h"
 #ifdef USERPROG
 #include "userprog/process.h"
 #endif
@@ -84,7 +85,7 @@ static tid_t allocate_tid (void);
 
    It is not safe to call thread_current() until this function
    finishes. */
-int load_avg  ; // declare a global var to be initialize in run time 
+   int load_avg ; 
 void
 thread_init (void) 
 {
@@ -95,6 +96,7 @@ thread_init (void)
   list_init (&all_list);
 
   load_avg = 0; /*ADDED*/
+
   /* Set up a thread structure for the running thread. */
   initial_thread = running_thread ();
   init_thread (initial_thread, "main", PRI_DEFAULT);
@@ -370,7 +372,7 @@ int calc_priority(struct thread *t) /*ADDED*/
   //struct thread *t = thread_current();
   //calc_load_avg();    /* Not sure whethter these 2 functions should be added here
   //calc_recent_cpu(t);  */
-  t -> priority = PRI_MAX - (t -> recent_cpu / 4) - (thread_get_nice(t) * 2); 
+  t -> priority =   fixed_to_int(int_to_fixed(PRI_MAX) - (t -> recent_cpu / 4) - int_to_fixed(thread_get_nice(t) * 2)); 
   
   if(t -> priority > PRI_MAX)
     t -> priority = PRI_MAX;
@@ -389,7 +391,7 @@ void calc_load_avg() /*ADDED*/
     ready_threads++;
   }
 
-  load_avg = (59/60) * load_avg + (1/60) * ready_threads;
+  load_avg = fixed_multiply(int_to_fixed(59)/60 , load_avg) + ((int_to_fixed(1)/60) * ready_threads);
   /*load_avg NOT decalred yet. not sure where to initialize it. it should be zero at first*/
   /*i declared it in line 119 in thread.h but i am not sure whether it should be declared there*/
   /*i initialized it in thread_intit() line 96*/
@@ -397,8 +399,8 @@ void calc_load_avg() /*ADDED*/
 
 void calc_recent_cpu(struct thread *t) /* ADDED*/
 {
-  int deacy = (2 * load_avg) / ((2 * load_avg) + 1);
-  t -> recent_cpu = deacy * t -> recent_cpu + thread_get_nice(t);
+  fixed_point deacy = fixed_divide((load_avg*2) , (( load_avg*2) + int_to_fixed(1)));
+  t -> recent_cpu = fixed_multiply(deacy , t -> recent_cpu) + int_to_fixed(thread_get_nice(t));
 }
 
 /* Sets the current thread's priority to NEW_PRIORITY. */
