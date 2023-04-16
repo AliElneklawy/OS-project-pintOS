@@ -1,7 +1,7 @@
 #ifndef FIXED_POINT_H
 #define FIXED_POINT_H
 
-#include <bits/stdint-intn.h>
+#include <stdint.h>
 
 // Define the number of bits used to represent the decimal portion of the fixed-point number
 #define FIXED_POINT_BITS 16
@@ -19,12 +19,13 @@ fixed_point int_to_fixed(int x) {
 
 // Function to convert a fixed-point number to its integer representation
 int fixed_to_int(fixed_point x) {
-    if (x >= 0)
-        // Round the fixed-point number to the nearest integer
-        return (x + ((FIXED_POINT_ONE / 2) / (FIXED_POINT_ONE)));
-    else
-        // Round the fixed-point number to the nearest integer
-        return (x - ((FIXED_POINT_ONE / 2) / (FIXED_POINT_ONE)));
+    // if (x >= 0)
+    //     // Round the fixed-point number to the nearest integer
+    //     return (x + ((FIXED_POINT_ONE / 2) / (FIXED_POINT_ONE)));
+    // else
+    //     // Round the fixed-point number to the nearest integer
+    //     return (x - ((FIXED_POINT_ONE / 2) / (FIXED_POINT_ONE)));
+    return x >>FIXED_POINT_BITS ;
 }
 
 // Function to perform addition on two fixed-point numbers
