@@ -11,7 +11,7 @@
 #include "threads/switch.h"
 #include "threads/synch.h"
 #include "threads/vaddr.h"
-#include "fixed_point.h"
+#include "threads/fixed_point.h"
 #ifdef USERPROG
 #include "userprog/process.h"
 #endif
@@ -373,7 +373,10 @@ int calc_priority(struct thread *t) /*ADDED*/
   //struct thread *t = thread_current();
   //calc_load_avg();    /* Not sure whethter these 2 functions should be added here
   //calc_recent_cpu(t);  */
-  t -> priority =   fixed_to_int(int_to_fixed(PRI_MAX) - (t -> recent_cpu / 4) - int_to_fixed(thread_get_nice(t) * 2)); 
+
+  fixed_point temp_recent_cpu = thread_get_recent_cpu()/100 ;
+
+  t -> priority =   fixed_to_int(int_to_fixed(PRI_MAX) - (temp_recent_cpu / 4) - int_to_fixed(thread_get_nice(t) * 2)); 
   
   if(t -> priority > PRI_MAX)
     t -> priority = PRI_MAX;
@@ -395,13 +398,14 @@ void calc_load_avg() /*ADDED*/
 
   ready_threads = list_size(&(ready_list));
 
-  load_avg = fixed_multiply(int_to_fixed(59)/60 , load_avg) + ((int_to_fixed(1)/60) * ready_threads);
+  load_avg = fixed_multiply(int_to_fixed(59)/60 , int_to_fixed(thread_get_load_avg())/100) + ((int_to_fixed(1)/60) * ready_threads);
 }
 
 void calc_recent_cpu(struct thread *t) /* ADDED*/
 {
-  fixed_point deacy = fixed_divide((load_avg*2) , (( load_avg*2) + int_to_fixed(1)));
-  t -> recent_cpu = fixed_multiply(deacy , t -> recent_cpu) + int_to_fixed(thread_get_nice(t));
+  fixed_point temp_load_avg = int_to_fixed(thread_get_load_avg())/100;
+  fixed_point deacy = fixed_divide((temp_load_avg*2) , (( temp_load_avg*2) + int_to_fixed(1)));
+  t -> recent_cpu = fixed_multiply(deacy ,thread_get_recent_cpu()) + int_to_fixed(thread_get_nice(t));
 }
 
 /* Sets the current thread's priority to NEW_PRIORITY. */
@@ -454,7 +458,6 @@ thread_get_recent_cpu () /*modified args*/
 {
   return thread_current() -> recent_cpu * 100; /*ADDED*/
 }
-
 /* Idle thread.  Executes when no other thread is ready to run.
 
    The idle thread is initially put on the ready list by
@@ -503,7 +506,6 @@ kernel_thread (thread_func *function, void *aux)
   function (aux);       /* Execute the thread function. */
   thread_exit ();       /* If function() returns, kill the thread. */
 }
-
 /* Returns the running thread. */
 struct thread *
 running_thread (void) 
@@ -662,7 +664,6 @@ allocate_tid (void)
 
   return tid;
 }
-
 /* Offset of `stack' member within `struct thread'.
    Used by switch.S, which can't figure it out on its own. */
 uint32_t thread_stack_ofs = offsetof (struct thread, stack);
