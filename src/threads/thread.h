@@ -4,7 +4,7 @@
 #include <debug.h>
 #include <list.h>
 #include <stdint.h>
-
+//#include "fixed_point.h"
 //static struct list all_list; //moved it from thread.c
 //static struct list ready_list; //moved it from thread.c
 
