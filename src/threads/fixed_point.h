@@ -1,7 +1,7 @@
 #ifndef FIXED_POINT_H
 #define FIXED_POINT_H
 
-#include <bits/stdint-intn.h>
+#include <stdint.h>
 
 #define FIXED_POINT_BITS 16
 #define FIXED_POINT_ONE (1 << FIXED_POINT_BITS)
