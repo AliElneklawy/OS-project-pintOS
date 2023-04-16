@@ -1,11 +1,8 @@
-#ifndef FIXED_POINT_H
-#define FIXED_POINT_H
 
 #include <stdint.h>
 
 
 // Define the number of bits used to represent the decimal portion of the fixed-point number
-#define FIXED_POINT_BITS 32
 
 #define q 14
 #define p 17
@@ -72,5 +69,3 @@ fixed_point int_fixed_div(fixed_point x, int n)
 {
     return x / n;
 }
-// End of the header guard
-#endif //FIXED_POINT_H
