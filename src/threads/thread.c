@@ -85,7 +85,7 @@ static tid_t allocate_tid (void);
 
    It is not safe to call thread_current() until this function
    finishes. */
-int load_avg ; // declare a global var to be initialize in run time 
+fixed_point load_avg ; // declare a global var to be initialize in run time 
 
 void
 thread_init (void) 
@@ -373,7 +373,8 @@ int calc_priority(struct thread *t) /*ADDED*/
   //struct thread *t = thread_current();
   //calc_load_avg();    /* Not sure whethter these 2 functions should be added here
   //calc_recent_cpu(t);  */
-  t -> priority =   fixed_to_int(int_to_fixed(PRI_MAX) - (t -> recent_cpu / 4) - int_to_fixed(thread_get_nice(t) * 2)); 
+  t -> priority =   fixed_to_int(int_to_fixed(PRI_MAX) - (t -> recent_cpu / 4) - thread_get_nice(t) * 2);
+  //t -> priority = int_fixed_sub(PRI_MAX, int_fixed_div(t->recent_cpu, 4));
   
   if(t -> priority > PRI_MAX)
     t -> priority = PRI_MAX;

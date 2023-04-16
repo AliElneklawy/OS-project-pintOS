@@ -4,7 +4,7 @@
 #include <debug.h>
 #include <list.h>
 #include <stdint.h>
-//#include "fixed_point.h"
+#include "fixed_point.h"
 //static struct list all_list; //moved it from thread.c
 //static struct list ready_list; //moved it from thread.c
 
@@ -99,7 +99,7 @@ struct thread
     
     /*ADDED*/
     int nice; //per thread
-    int recent_cpu; //per thread
+    fixed_point recent_cpu; //per thread
     /*ADDED*/
 
 #ifdef USERPROG
@@ -115,7 +115,7 @@ struct thread
    If true, use multi-level feedback queue scheduler.
    Controlled by kernel command-line option "-o mlfqs". */
 extern bool thread_mlfqs;
-extern int load_avg; /*ADDED*/
+extern fixed_point load_avg; /*ADDED*/
 // just added extern to avoid redefine the variable
 
 void thread_init (void);
