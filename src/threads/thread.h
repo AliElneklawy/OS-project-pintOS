@@ -115,7 +115,7 @@ struct thread
    If true, use multi-level feedback queue scheduler.
    Controlled by kernel command-line option "-o mlfqs". */
 extern bool thread_mlfqs;
-extern fixed_point load_avg; /*ADDED*/
+extern int load_avg; /*ADDED*/
 // just added extern to avoid redefine the variable
 
 void thread_init (void);
@@ -150,7 +150,7 @@ int thread_get_recent_cpu ();
 int thread_get_load_avg (void); 
 
 /*ADDED*/
-int calc_priority(struct thread *);
+void calc_priority(struct thread *);
 void calc_recent_cpu(struct thread *);
 void calc_load_avg();
 //int cur_thread_recent_cpu();

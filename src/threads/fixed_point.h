@@ -1,9 +1,6 @@
 
 #include <stdint.h>
 
-
-// Define the number of bits used to represent the decimal portion of the fixed-point number
-
 #define q 14
 
 // Define a constant that represents the value 1 in fixed-point format
@@ -14,7 +11,7 @@ typedef int fixed_point;
 
 // Function to convert an integer to its fixed-point representation
 fixed_point int_to_fixed(int x) {
-    return x * f; // Shift the integer left by FIXED_POINT_BITS bits
+    return x * f;
 }
 
 // Function to convert a fixed-point number to its integer representation

@@ -368,13 +368,9 @@ thread_foreach (thread_action_func *func, void *aux)
     }
 }
 
-int calc_priority(struct thread *t) /*ADDED*/
+void calc_priority(struct thread *t) /*ADDED*/
 {
-  //struct thread *t = thread_current();
-  //calc_load_avg();    /* Not sure whethter these 2 functions should be added here
-  //calc_recent_cpu(t);  */
   t -> priority =   fixed_to_int(int_to_fixed(PRI_MAX) - (t -> recent_cpu / 4) - thread_get_nice(t) * 2);
-  //t -> priority = int_fixed_sub(PRI_MAX, int_fixed_div(t->recent_cpu, 4));
   
   if(t -> priority > PRI_MAX)
     t -> priority = PRI_MAX;
@@ -385,15 +381,6 @@ int calc_priority(struct thread *t) /*ADDED*/
 void calc_load_avg() /*ADDED*/
 {
   size_t ready_threads;
-  /*ready_threads = 0;
-
-  for(struct list_elem* iter = list_begin(&ready_list);
-      iter != list_end(&ready_list);
-      iter = list_next(iter)){
-
-    ready_threads++;
-  }*/ //there is a functions that returns the size of the list directly
-
   ready_threads = list_size(&(ready_list));
 
   load_avg = fixed_multiply(int_to_fixed(59)/60 , load_avg) + ((int_to_fixed(1)/60) * ready_threads);
@@ -401,8 +388,8 @@ void calc_load_avg() /*ADDED*/
 
 void calc_recent_cpu(struct thread *t) /* ADDED*/
 {
-  fixed_point deacy = fixed_divide((load_avg*2) , (( load_avg*2) + int_to_fixed(1)));
-  t -> recent_cpu = fixed_multiply(deacy , t -> recent_cpu) + int_to_fixed(thread_get_nice(t));
+  fixed_point decay = fixed_divide((load_avg*2) , (( load_avg*2) + int_to_fixed(1)));
+  t -> recent_cpu = fixed_multiply(decay , t -> recent_cpu) + int_to_fixed(thread_get_nice(t));
 }
 
 /* Sets the current thread's priority to NEW_PRIORITY. */
