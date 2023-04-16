@@ -1,6 +1,9 @@
 
 #include <stdint.h>
 
+
+// Define the number of bits used to represent the decimal portion of the fixed-point number
+
 #define q 14
 
 // Define a constant that represents the value 1 in fixed-point format
