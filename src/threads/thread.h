@@ -5,8 +5,6 @@
 #include <list.h>
 #include <stdint.h>
 #include "fixed_point.h"
-//static struct list all_list; //moved it from thread.c
-//static struct list ready_list; //moved it from thread.c
 
 /* States in a thread's life cycle. */
 enum thread_status
@@ -107,6 +105,12 @@ struct thread
     uint32_t *pagedir;                  /* Page directory. */
 #endif
 
+   uint64_t sleepingTime;      /*sleeping time of thread*/
+   /*donation*/
+   int actualPriority;
+   struct list aquiredLocksList ;
+   struct lock* waitingOnLock; 
+
     /* Owned by thread.c. */
     unsigned magic;                     /* Detects stack overflow. */
   };
@@ -115,8 +119,17 @@ struct thread
    If true, use multi-level feedback queue scheduler.
    Controlled by kernel command-line option "-o mlfqs". */
 extern bool thread_mlfqs;
-extern int load_avg; /*ADDED*/
+//extern int load_avg; /*ADDED*/
 // just added extern to avoid redefine the variable
+
+/*modified*/
+void wake_up_sleeping_thread(struct thread *t, void *aux);
+bool priorityHandler(const struct list_elem *a, const struct list_elem *b, void *aux);
+bool lockPriorityHandler(const struct list_elem *a, const struct list_elem *b, void *aux);
+void nestedDonation(struct thread * holderThread);
+void releaseLockPriorityHandling(struct lock* lock);
+void multipleLocksReleasing(struct lock* lock);
+/*end modified*/
 
 void thread_init (void);
 void thread_start (void);
@@ -153,8 +166,6 @@ int thread_get_load_avg (void);
 void calc_priority(struct thread *);
 void calc_recent_cpu(struct thread *);
 void calc_load_avg();
-//int cur_thread_recent_cpu();
-//int update_all_pri_rec();
 /*ADDED*/
 
 #endif /* threads/thread.h */
