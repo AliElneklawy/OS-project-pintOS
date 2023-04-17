@@ -496,7 +496,7 @@ void calc_recent_cpu(struct thread *t) /* ADDED*/
 {
 
   fixed_point decay = fixed_to_int_floor(fixed_divide(int_fixed_mul(load_avg, 2), int_fixed_add(int_fixed_mul(load_avg, 2), 1)));
-  t -> recent_cpu = (int_fixed_add(fixed_multiply(decay, t -> recent_cpu), t -> nice));
+  t -> recent_cpu = (int_fixed_add(fixed_multiply(decay , fixed_to_int_floor(t -> recent_cpu)),fixed_to_int_round (t -> nice)));
 }
 
 /* Sets the current thread's priority to NEW_PRIORITY. */
@@ -547,10 +547,13 @@ void
 thread_set_nice (int nice UNUSED)
 {
   /*ADDED*/
+    if(nice< -20 || nice >20)return;
   struct thread *t = thread_current();
+  if(thread_mlfqs){
   t -> nice = nice;
-  calc_priority(t);
-  try_thread_yield();
+  }
+  // calc_priority(t);
+  // try_thread_yield();
   /*ADDED*/
 }
 
@@ -559,7 +562,9 @@ int
 thread_get_nice ()
 {
   /*ADDED*/
-  return thread_current() -> nice;
+  struct thread *t = running_thread();
+  
+  return t->nice;
 }
 
 /* Returns 100 times the system load average. */
@@ -575,7 +580,6 @@ thread_get_recent_cpu () /*modified args*/
 {
   return fixed_to_int_round(int_fixed_mul(thread_current()->recent_cpu, 100)); /*ADDED*/
 }
-
 /* Idle thread.  Executes when no other thread is ready to run.
 
    The idle thread is initially put on the ready list by
