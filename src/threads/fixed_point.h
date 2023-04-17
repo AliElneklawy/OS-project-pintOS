@@ -30,4 +30,3 @@ fixed_point fixed_divide(fixed_point x, fixed_point y);
 fixed_point int_fixed_mul(fixed_point x, int n);
 
 fixed_point int_fixed_div(fixed_point x, int n);
-
