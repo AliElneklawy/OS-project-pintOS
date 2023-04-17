@@ -85,7 +85,7 @@ static tid_t allocate_tid (void);
 
    It is not safe to call thread_current() until this function
    finishes. */
-int load_avg ; // declare a global var to be initialize in run time 
+static int load_avg ; // declare a global var to be initialize in run time 
 
   /*additonal functions*/
 /***********start functions***************/
@@ -230,12 +230,12 @@ thread_tick (void) //called from timer.c
   if(thread_mlfqs){
     /*every 1 tick, increase running thread's recent_cpu by 1*/
     if(t != idle_thread){
-      t -> recent_cpu = fixed_to_int_floor(int_fixed_add(t->recent_cpu, 1));
+      t -> recent_cpu = int_fixed_add(t->recent_cpu, 1);
     }
 
-    if((kernel_ticks % 4) == 0){ //TIME_SLICE = 4 in threads.c
+    if((timer_ticks() % 4) == 0){ //TIME_SLICE = 4 in threads.c
       //recaclculate priority of all threads every 4th tick
-      struct thread *t2;
+      /*struct thread *t2;
       for(struct list_elem* iter = list_begin(&all_list);
           iter != list_end(&all_list);
           iter = list_next(iter)){
@@ -243,14 +243,16 @@ thread_tick (void) //called from timer.c
             
             if(t2 != idle_thread)
               calc_priority(t2);
-          }
+          }*/
+
+          thread_foreach(calc_priority, NULL);
     }
 
-    if(timer_ticks () % 100 == 0) //TIMER_FREQ = 100 defined in timer.h
+    if(timer_ticks () % 100 == 0){ //TIMER_FREQ = 100 defined in timer.h
     /*every 1 sec, update every thread's recent_cpu, load_avg and priority*/
       calc_load_avg();
       
-      struct thread *t2; //i used t2 instead of t that is defined in the function here to avoid confusion
+      /*struct thread *t2; //i used t2 instead of t that is defined in the function here to avoid confusion
       for(struct list_elem* iter = list_begin(&all_list);
           iter != list_end(&all_list);
           iter = list_next(iter)){
@@ -260,7 +262,10 @@ thread_tick (void) //called from timer.c
               calc_recent_cpu(t2);
               calc_priority(t2);
             }
-          }
+          }*/
+      thread_foreach(calc_recent_cpu, NULL);
+      thread_foreach(calc_priority, NULL);
+    }
   }
   /*ADDED*/
 
@@ -468,8 +473,11 @@ thread_foreach (thread_action_func *func, void *aux)
 
 void calc_priority(struct thread *t) /*ADDED*/
 {
-  t -> priority = PRI_MAX - fixed_to_int_round(int_fixed_div(t->recent_cpu, 4)) - (t->nice * 2);
-  
+  //t -> priority = PRI_MAX - fixed_to_int_round(int_fixed_div(t->recent_cpu, 4)) - (t->nice * 2);
+  t -> priority = (int)fixed_to_int_round(
+                           fixed_subtract(int_to_fixed((PRI_MAX - ((t->nice) * 2))),
+						           fixed_divide(t->recent_cpu, 4)));
+
   if(t -> priority > PRI_MAX)
     t -> priority = PRI_MAX;
   else if(t -> priority < PRI_MIN)
@@ -515,6 +523,19 @@ void thread_set_priority(int new_priority)
   intr_set_level(old_level);
 }
 
+void
+try_thread_yield (void)
+{
+  enum intr_level old_level = intr_disable ();
+  bool result = !list_empty (&ready_list) &&
+                list_entry (list_back (&ready_list), struct thread, elem)->priority >
+	            thread_get_priority ();
+  intr_set_level (old_level);
+  
+  if (result)
+	  thread_yield (); 
+}
+
 /* Returns the current thread's priority. */
 int
 thread_get_priority (void) 
@@ -527,8 +548,10 @@ void
 thread_set_nice (int nice UNUSED)
 {
   /*ADDED*/
-  thread_current() -> nice = nice;
-  //calc_priority(t);
+  struct thread *t = thread_current();
+  t -> nice = nice;
+  calc_priority(t);
+  try_thread_yield();
   /*ADDED*/
 }
 
