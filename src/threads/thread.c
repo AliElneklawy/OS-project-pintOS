@@ -138,10 +138,6 @@ thread_tick (void) //called from timer.c
 #endif
   else
     kernel_ticks++;
-
-  /* Enforce preemption. */
-  if (++thread_ticks >= TIME_SLICE)
-    intr_yield_on_return ();
   
   /*ADDED*/
   if(thread_mlfqs){
@@ -157,23 +153,33 @@ thread_tick (void) //called from timer.c
           iter != list_end(&all_list);
           iter = list_next(iter)){
             t2 = list_entry(iter, struct thread, allelem);
-            calc_priority(t2);
+            
+            if(t2 != idle_thread)
+              calc_priority(t2);
           }
     }
 
     if (timer_ticks () % 100 == 0) //TIMER_FREQ = 100 defined in timer.h
     /*every 1 sec, update every thread's recent_cpu, load_avg and priority*/
       calc_load_avg();
+      
       struct thread *t2; //i used t2 instead of t that is defined in the function here to avoid confusion
       for(struct list_elem* iter = list_begin(&all_list);
           iter != list_end(&all_list);
           iter = list_next(iter)){
             t2 = list_entry(iter, struct thread, allelem);
-            calc_recent_cpu(t2);
-            calc_priority(t2);
+            
+            if(t2 != idle_thread){
+              calc_recent_cpu(t2);
+              calc_priority(t2);
+            }
           }
   }
   /*ADDED*/
+
+  /* Enforce preemption. */
+  if (++thread_ticks >= TIME_SLICE)
+    intr_yield_on_return ();
 }
 
 /* Prints thread statistics. */
@@ -370,7 +376,7 @@ thread_foreach (thread_action_func *func, void *aux)
 
 void calc_priority(struct thread *t) /*ADDED*/
 {
-  t -> priority =   fixed_to_int(int_to_fixed(PRI_MAX) - (t -> recent_cpu / 4) - thread_get_nice(t) * 2);
+  t -> priority = fixed_to_int(int_to_fixed(PRI_MAX) - (int_to_fixed(t -> recent_cpu) / 4) - thread_get_nice(t) * 2);
   
   if(t -> priority > PRI_MAX)
     t -> priority = PRI_MAX;
