@@ -489,14 +489,14 @@ void calc_load_avg() /*ADDED*/
   size_t ready_threads;
   ready_threads = list_size(&(ready_list));
 
-  load_avg = fixed_to_int_floor(fixed_add(int_fixed_div(int_fixed_mul(load_avg, 59), 60), int_fixed_div(int_to_fixed(ready_threads + (strcmp(running_thread()->name,"idle")==0?0:1)), 60)));
+  load_avg = fixed_add(int_fixed_div(int_fixed_mul(load_avg, 59), 60), int_fixed_div(int_to_fixed(ready_threads + (strcmp(running_thread()->name,"idle")==0?0:1)), 60));
 }
 
 void calc_recent_cpu(struct thread *t) /* ADDED*/
 {
 
   fixed_point decay = fixed_to_int_floor(fixed_divide(int_fixed_mul(load_avg, 2), int_fixed_add(int_fixed_mul(load_avg, 2), 1)));
-  t -> recent_cpu = fixed_to_int_floor(int_fixed_add(fixed_multiply(decay, t -> recent_cpu), t -> nice));
+  t -> recent_cpu = (int_fixed_add(fixed_multiply(decay, t -> recent_cpu), t -> nice));
 }
 
 /* Sets the current thread's priority to NEW_PRIORITY. */
@@ -534,8 +534,7 @@ try_thread_yield (void)
   
   if (result)
 	  thread_yield (); 
-}
-
+}                                                                                                                                                                                                                                                                                                                                                                                                                                                              
 /* Returns the current thread's priority. */
 int
 thread_get_priority (void) 
@@ -789,7 +788,6 @@ allocate_tid (void)
 
   return tid;
 }
-
 /* Offset of `stack' member within `struct thread'.
    Used by switch.S, which can't figure it out on its own. */
 uint32_t thread_stack_ofs = offsetof (struct thread, stack);
