@@ -1,0 +1,8 @@
+{
+    "files.associations": {
+        "synch.h": "c",
+        "thread.h": "c",
+        "list.h": "c",
+        "fixed_point.h": "c"
+    }
+}
