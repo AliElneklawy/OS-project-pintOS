@@ -353,8 +353,7 @@ void thread_unblock(struct thread *t)
 
   old_level = intr_disable();
   ASSERT(t->status == THREAD_BLOCKED);
-  /*threads should be pushed in order*/
-//  list_push_back(&ready_list, &t->elem);
+
   list_insert_ordered(&ready_list , &t->elem , (list_less_func*)&to_sort_thread , NULL);
   t->status = THREAD_READY;
   intr_set_level(old_level);
@@ -451,10 +450,6 @@ thread_foreach (thread_action_func *func, void *aux)
 
 void calc_priority(struct thread *t) /*ADDED*/
 {
-//f->priority = PRI_MAX - tointround(divin(f->recent_cpu,4)) - (f->nice * 2);
- /* t -> priority = (int)fixed_to_int_round(
-                           fixed_subtract(int_to_fixed((PRI_MAX - ((t->nice) * 2))),
-						           fixed_divide(t->recent_cpu, 4)));*/
   t -> priority = PRI_MAX - fixed_to_int_round(int_fixed_div(t->recent_cpu, 4)) - t -> nice * 2;
 
   if(t -> priority > PRI_MAX)
@@ -467,15 +462,12 @@ void calc_load_avg() /*ADDED*/
 {
   size_t ready_threads;
   ready_threads = list_size(&(ready_list));
-//load_avg = addfx(divin(mulin(load_avg, 59), 60), divin(tofxpt(list_size(&ready_list) + (strcmp(running_thread()->name,"idle")==0?0:1)), 60));
 
   load_avg = fixed_add(int_fixed_div(int_fixed_mul(load_avg, 59), 60), int_fixed_div(int_to_fixed(ready_threads + (strcmp(running_thread()->name,"idle")==0?0:1)), 60));
 }
 
 void calc_recent_cpu(struct thread *t) /* ADDED*/
 {
-	//temp = divfx(mulin(load_avg, 2),addin(mulin(load_avg, 2), 1));
-// f->recent_cpu = addin(mulfx(temp, f->recent_cpu),f->nice);
   int decay = (fixed_divide(int_fixed_mul(load_avg, 2), int_fixed_add(int_fixed_mul(load_avg, 2), 1)));
   t -> recent_cpu = int_fixed_add(fixed_multiply(decay , t -> recent_cpu), t -> nice);
 }
@@ -528,7 +520,7 @@ void
 thread_set_nice (int nice UNUSED)
 {
   /*ADDED*/
-  if(nice< -20 || nice >20)return;
+  if(nice< -20 || nice >20)	return;
   struct thread *t = thread_current();
   if(thread_mlfqs){
   t -> nice = nice;
