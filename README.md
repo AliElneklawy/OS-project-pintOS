@@ -2,7 +2,7 @@
 
 This repository contains our solution to the pintos project.
 
-##### Design Documents
+#### Design Documents
 
 * [Introduction](https://github.com/AliElneklawy/OS-project-pintOS/blob/main/Design%20documents/Introduction.md)
 
