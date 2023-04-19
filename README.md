@@ -1,4 +1,4 @@
-# OS Project
+# OS Project - Spring 2023
 
 This repository contains our solution to the pintos project.
 
