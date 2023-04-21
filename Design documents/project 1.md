@@ -4,7 +4,7 @@
 
 1- In `thread.h`: 
   * Added two attributes to the thread struct.
-    - `nice`: determines how nice the thread is.
+    - `nice`: determines how nice the thread is. The nicer the thread, the less priority it has.
     - `recent_cpu`: measures the amount of time the thread spent on using the cpu.
   
   ```c
