@@ -1,6 +1,6 @@
 # Task 3: Multi-level Feedback Queue Scheduler
 
-## Data structures
+## Data Structures and Modifications
 
 1- In `thread.h`: 
   * Added two attributes to the thread struct.
