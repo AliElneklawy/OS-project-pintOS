@@ -7,7 +7,7 @@
     - `nice`: determines how nice the thread is.
     - `recent_cpu`: measures the amount of time the thread spent on using the cpu.
   
-  ```
+  ```c
   struct thread{
   
     ...
