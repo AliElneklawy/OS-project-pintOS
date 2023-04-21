@@ -16,7 +16,6 @@
     ...
     
   };
-  
   ```
  * Added a global variable `extern int load_avg` that estimates the average number of ready threads in the past minute.
   
