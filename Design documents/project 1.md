@@ -3,7 +3,7 @@
 ## Data structures
 
 1- In `thread.h`: 
-  * Added to attributes to the thread struct.
+  * Added two attributes to the thread struct.
     - `nice`: determines how nice the thread is.
     - `recent_cpu`: measures the amount of time the thread spent on using the cpu.
   
