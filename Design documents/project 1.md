@@ -36,5 +36,5 @@ The advanced scheduler depends on the OS to calculate the priorities of the thre
 
 `recent_cpu` is a variable that estimates how much time a thread spent using the cpu. Each time a timer interrupt occurs, `recent_cpu` is incremented by 1 for the running thread only. Its value is also recalculated every second for all threads according to the following formula:  $$recent\textunderscore cpu = \frac{2 \times load\textunderscore avg}{2 \times load\textunderscore avg + 1} \times recent\textunderscore cpu + nice$$ where `nice` is a variable set by the user and initially set to zero. The value of `nice` ranges from -20 to 20.
 
-The `priority` varibale, declared inside `struct thread`, defines the priority of each thread. It is calculated every four ticks through the following equation, $$priority = PRI\textunderscore MAX - \frac{recent\textunderscore cpu}{4} - (2 \times nice)$$ Preemption should occur if the resulting priority is greater than the priority of the current thread.
+The `priority` varibale, declared inside `struct thread`, defines the priority of each thread. It is calculated every four ticks and every second through the following equation, $$priority = PRI\textunderscore MAX - \frac{recent\textunderscore cpu}{4} - (2 \times nice)$$ Preemption should occur if the resulting priority is greater than the priority of the current thread.
 
