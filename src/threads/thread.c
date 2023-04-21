@@ -495,19 +495,7 @@ void thread_set_priority(int new_priority)
   thread_yield();
   intr_set_level(old_level);
 }
-
-void
-try_thread_yield (void)
-{
-  enum intr_level old_level = intr_disable ();
-  bool result = !list_empty (&ready_list) &&
-                list_entry (list_back (&ready_list), struct thread, elem)->priority >
-	            thread_get_priority ();
-  intr_set_level (old_level);
-  
-  if (result)
-	  thread_yield (); 
-}                                                                                                                                                                                                                                                                                                                                                                                                                                                              
+                                                                                                                                                                                                                                                                                                                                                                                                                                                             
 /* Returns the current thread's priority. */
 int
 thread_get_priority (void) 
