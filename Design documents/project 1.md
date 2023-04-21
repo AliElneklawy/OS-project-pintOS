@@ -27,3 +27,5 @@
  * Initialized the variables `nice`, `recent_cpu`, and `load_avg` to zero.
 
 3- Added a header file `fixed_point.h` to handle fixed point operations.
+
+## Algorithm
