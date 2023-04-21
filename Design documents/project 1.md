@@ -32,5 +32,5 @@
  
 The advanced scheduler depends on the OS to calculate the priorities of the threads. This is achieved by the `load_avg`, `recent_cpu` and `nice` variables. 
 
-`load_avg` is a weighted moving average of the amount of waiting threads in `ready_list` and the current thread (if it is not idle. At first, it is initialized to zero. Then, it is updated every second according to the followin formula: $load\_avg = \left(\frac{59}{60}\right) \times load\_avg + \left(\frac{1}{60}\right) \times ready\_threads$
+`load_avg` is a weighted moving average of the amount of waiting threads in `ready_list` and the current thread (if it is not idle. At first, it is initialized to zero. Then, it is updated every second according to the followin formula: $$load\_avg = \left(\frac{59}{60}\right) \times load\_avg + \left(\frac{1}{60}\right) \times ready\_threads$$
 
