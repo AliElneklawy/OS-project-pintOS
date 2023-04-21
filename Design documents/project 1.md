@@ -2,4 +2,15 @@
 
 ## ** Data structures **
 
-1- In `thread.h`
+1- In `thread.h`: added to attributes.
+  ```
+  struct thread{
+  
+    ...
+    int nice;     
+    int recent_cpu;    
+    ...
+    
+  };
+  
+  ```
