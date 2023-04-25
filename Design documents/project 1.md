@@ -39,6 +39,8 @@ The advanced scheduler depends on the OS to calculate the priorities of the thre
 The `priority` varibale, declared inside `struct thread`, defines the priority of each thread. It is calculated every four ticks and every second through the following equation, $$priority = PRI\textunderscore MAX - \frac{recent\textunderscore cpu}{4} - (2 \times nice)$$ where PRI_MAX equals 63. Preemption should occur if the resulting priority is greater than the priority of the current thread.
 
 
+Assuming that the value of the time slice (time quantum) is 4 timer ticks, we can calculate the scheduling decision and the new priority and recent_cpu values for each thread after each given number of timer ticks as follows:
+
 | timer ticks | recent_cpu A B C | priority A B C | thread to run |
 | ----------- |-------------------|----------------|------------- |
 | 0           | 0 0 0             | 63 61 59       | A             |
