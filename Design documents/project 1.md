@@ -57,7 +57,8 @@ Assuming that the value of the time slice (time quantum) is 4 timer ticks, we ca
 
 ## Additional Questions
 
-> Did any ambiguities in the scheduler specification make values in the table uncertain ?
+> Did any ambiguities in the scheduler specification make values in the table uncertain?
+
 No ambiguities were found since our implementation follows the specs perfectly.
 
 > How is the way you divided the cost of scheduling between code inside and outside interrupt context likely to affect performance?
