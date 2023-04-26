@@ -41,7 +41,7 @@ The `priority` varibale, declared inside `struct thread`, defines the priority o
 
 Assuming that the value of the time slice (time quantum) is 4 timer ticks, we can calculate the scheduling decision and the new priority and recent_cpu values for each thread after each given number of timer ticks as follows:
 
-| timer ticks | recent_cpu A B C | priority A B C | thread to run |
+| timer ticks | recent_cpu (A B C) | priority (A B C) | thread to run |
 | ----------- |-------------------|----------------|------------- |
 | 0           | 0 0 0             | 63 61 59       | A             |
 | 4           | 4 0 0             | 63 61 59       | A             |
