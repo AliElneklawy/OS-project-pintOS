@@ -55,11 +55,12 @@ Assuming that the value of the time slice (time quantum) is 4 timer ticks, we ca
 | 36          | 16 16 8           | 59 58 58       | C             |
 
 
+## Additional Questions
 
-## Did any ambiguities in the scheduler specification make values in the table uncertain ?
-No ambiguity found since our implementation follows the spec perfectly.
+> Did any ambiguities in the scheduler specification make values in the table uncertain ?
+No ambiguities were found since our implementation follows the specs perfectly.
 
-## How is the way you divided the cost of scheduling between code inside and outside interrupt context likely to affect performance?
+> How is the way you divided the cost of scheduling between code inside and outside interrupt context likely to affect performance?
 
 Dividing the cost of scheduling between code inside and outside interrupt context is important for performance because it reduces the amount of time spent in interrupt context, which is a time-critical section of code. If too much time is spent in interrupt context, it might result in slightly higher overheads due to increased context switches when moving from IRQ to User mode. However, this should be minimized since we set the irq_count field correctly during scheduling. Overall, our approach shouldn't lead to significant perf issues if implemented correctly.
 
