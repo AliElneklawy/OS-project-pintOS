@@ -77,3 +77,4 @@ Dividing the cost of scheduling between code inside and outside interrupt contex
 ## Refrences
 
 1. Operating Systems: Internals and Design Principles (9e)
+2. https://web.stanford.edu/class/cs140/projects/pintos/pintos.pdf
