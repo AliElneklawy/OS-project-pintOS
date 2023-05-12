@@ -5,6 +5,8 @@
         "stddef.h": "c",
         "stdint.h": "c",
         "thread.h": "c",
-        "inttypes.h": "c"
+        "inttypes.h": "c",
+        "*.inc": "c",
+        "atomic": "c"
     }
 }

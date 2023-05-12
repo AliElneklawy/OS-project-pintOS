@@ -40,6 +40,14 @@ process_execute (const char *file_name)
 
   /* Create a new thread to execute FILE_NAME. */
   tid = thread_create (file_name, PRI_DEFAULT, start_process, fn_copy);
+
+  /*
+    parent must wait for the child here to know if the child creation was successful
+  */
+
+  /*
+    parent wakes up and checks for child_success
+  */
   if (tid == TID_ERROR)
     palloc_free_page (fn_copy); 
   return tid;
@@ -60,7 +68,9 @@ start_process (void *file_name_)
   if_.cs = SEL_UCSEG;
   if_.eflags = FLAG_IF | FLAG_MBS;
   success = load (file_name, &if_.eip, &if_.esp);
-
+  /*
+    push args into stack here
+  */
   /* If load failed, quit. */
   palloc_free_page (file_name);
   if (!success) 
@@ -311,6 +321,10 @@ load (const char *file_name, void (**eip) (void), void **esp)
   success = true;
 
  done:
+  
+  /*
+  file_deny_write() here to prevent any modifications to the current file
+  */
   /* We arrive here whether the load is successful or not. */
   file_close (file);
   return success;
