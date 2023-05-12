@@ -1,4 +1,4 @@
-# Task 3: Multi-level Feedback Queue Scheduler
+# Task 3: Multi-level Feedback Queue Scheduler 
 
 ## Data Structures and Modifications
 
@@ -38,3 +38,43 @@ The advanced scheduler depends on the OS to calculate the priorities of the thre
 
 The `priority` varibale, declared inside `struct thread`, defines the priority of each thread. It is calculated every four ticks and every second through the following equation, $$priority = PRI\textunderscore MAX - \frac{recent\textunderscore cpu}{4} - (2 \times nice)$$ where PRI_MAX equals 63. Preemption should occur if the resulting priority is greater than the priority of the current thread.
 
+
+Assuming that the value of the time slice (time quantum) is 4 timer ticks, we can calculate the scheduling decision and the new `priority` and `recent_cpu` values for each thread after each given number of timer ticks as follows:
+
+| timer ticks | recent_cpu (A B C) | priority (A B C) | thread to run |
+| ----------- |-------------------|----------------|------------- |
+| 0           | 0 0 0             | 63 61 59       | A             |
+| 4           | 4 0 0             | 63 61 59       | A             |
+| 8           | 8 4 0             | 62 61 59       | B             |
+| 12          | 8 8 0             | 61 61 59       | B             |
+| 16          | 8 8 4             | 61 60 59       | C             |
+| 20          | 12 8 4            | 61 60 58       | A             |
+| 24          | 16 8 4            | 60 60 58       | A             |
+| 28          | 16 12 4           | 60 59 58       | B             |
+| 32          | 16 16 4           | 59 59 58       | B             |
+| 36          | 16 16 8           | 59 58 58       | C             |
+
+
+## Additional Questions
+
+### 1.
+> Did any ambiguities in the scheduler specification make values in the table uncertain?
+
+No ambiguities were found since our implementation follows the specs perfectly.
+
+### 2.
+> How is the way you divided the cost of scheduling between code inside and outside interrupt context likely to affect performance?
+
+Dividing the cost of scheduling between code inside and outside interrupt context is important for performance because it reduces the amount of time spent in interrupt context, which is a time-critical section of code. If too much time is spent in interrupt context, it might result in slightly higher overheads due to increased context switches when moving from IRQ to User mode. However, this should be minimized since we set the irq_count field correctly during scheduling. Overall, our approach shouldn't lead to significant perf issues if implemented correctly.
+
+
+| Cost | Inside interrupt context | Outside interrupt context |
+|---|---|---|
+| Time | Longer | Shorter |
+| Interrupts generated | More | Fewer |
+| Performance | Worse | Better |
+
+## Refrences
+
+1. Operating Systems: Internals and Design Principles (9e)
+2. https://web.stanford.edu/class/cs140/projects/pintos/pintos.pdf
